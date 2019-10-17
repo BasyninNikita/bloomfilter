@@ -9,8 +9,9 @@ def get_command():
     for line in sys.stdin:
         if 'set' in line:
             if len(line.replace('set', '').strip().split(
-                    ' ')) == 2 and ss == 0:  # line.replace('push ', '')[:-1] != 1 and ss != 0:
+                    ' ')) == 2 and ss == 0 and line.split()[1] != '0':  # line.replace('push ', '')[:-1] != 1 and ss != 0:
                 bf = BloomFilter(int(line.split()[1]), float(line.split()[2]))
+                print(str(bf.m) + ' ' + str(bf.num_hashes))
                 ss = 1
             else:
                 print('error')
@@ -18,7 +19,7 @@ def get_command():
             if len(line.replace('add', '').strip().split(
                     ' ')) == 1 and ss != 0:  # line.replace('push ', '')[:-1] != 1 and ss != 0:
                 bf.add(int(line.split()[1]))
-                print('',end = '')
+                print('', end='')
             else:
                 print('error')
         elif 'search' in line:
@@ -69,7 +70,7 @@ class BloomFilter:
         self.num_hashes = round(-(math.log2(P)))
         self.m = round(- (n * math.log2(P)) / math.log(2))
         self.bits = 0
-        print(str(self.m) + ' ' + str(self.num_hashes))
+        # print(str(self.m) + ' ' + str(self.num_hashes))
 
     def hashes(self, key):
         hashs = list()  # (((i + 1)*x + pi+1) mod M) mod m ne pi,a p i+1-oe
@@ -89,10 +90,12 @@ class BloomFilter:
 
     def print(self):
         s = ''
-        for i in range(self.m - len(bin(self.bits)[2:])):
-            s += ('0')
+        # for i in range(self.m - len(bin(self.bits)[2:])):
+        #     s += ('0')
+        s += '0' * (self.m - len(bin(self.bits)[2:]))
         s += (bin(self.bits)[:1:-1]) + '\n'
         return s
 
 
 get_command()
+
