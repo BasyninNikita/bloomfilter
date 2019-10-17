@@ -5,31 +5,32 @@ M = 216091  # M-31th Mersen's number
 
 
 def get_command():
-    ss = 0
+    ss = False
     for line in sys.stdin:
         if 'set' in line:
-            if len(line.replace('set', '').strip().split(
-                    ' ')) == 2 and ss == 0 and line.split()[1] != '0':  # line.replace('push ', '')[:-1] != 1 and ss != 0:
+            if len(line.replace('set', '').strip().split(' ')) == 2 \
+                    and ss == 0 and int(line.split()[1]) > 1 and float(line.split()[2]) < 0.7:  # line
+                # .replace('push ', '')[:-1] != 1 and ss != 0:
                 bf = BloomFilter(int(line.split()[1]), float(line.split()[2]))
-                print(str(bf.m) + ' ' + str(bf.num_hashes))
-                ss = 1
+                print(str(bf.size()) + ' ' + str(bf.num_hashs()))
+                ss = True
             else:
                 print('error')
         elif 'add' in line:
             if len(line.replace('add', '').strip().split(
-                    ' ')) == 1 and ss != 0:  # line.replace('push ', '')[:-1] != 1 and ss != 0:
+                    ' ')) == 1 and ss :  # line.replace('push ', '')[:-1] != 1 and ss != 0:
                 bf.add(int(line.split()[1]))
                 print('', end='')
             else:
                 print('error')
         elif 'search' in line:
             if len(line.replace('search', '').strip().split(
-                    ' ')) == 1 and ss != 0:  # line.replace('push ', '')[:-1] != 1 and ss != 0:
+                    ' ')) == 1 and ss :  # line.replace('push ', '')[:-1] != 1 and ss != 0:
                 print(bf.search(int(line.split()[1])), end='')
             else:
                 print('error')
         elif 'print' in line:
-            if line.replace("print", '') != '\n' or ss == 0:
+            if line.replace("print", '') != '\n' or ss == False:
                 print('error')
             else:
                 print(bf.print(), end='')
@@ -71,6 +72,12 @@ class BloomFilter:
         self.m = round(- (n * math.log2(P)) / math.log(2))
         self.bits = 0
         # print(str(self.m) + ' ' + str(self.num_hashes))
+
+    def size(self):
+        return self.m
+
+    def num_hashs(self):
+        return self.num_hashes
 
     def hashes(self, key):
         hashs = list()  # (((i + 1)*x + pi+1) mod M) mod m ne pi,a p i+1-oe
