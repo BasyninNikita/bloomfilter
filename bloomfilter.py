@@ -4,36 +4,38 @@ import sys
 M = 216091  # M-31th Mersen's number
 
 
-# def get_comand():
-#     for line in sys.stdin:
-#         if 'set_size ' in line:
-#             # global ss
-#             # s=line.replace("set_size ", '')[:-1]
-#             if line.replace("set_size ", '')[:-1].isnumeric() and ss == 0:
-#                 NewStack = MyStack(int(line[9:]))
-#                 ss = 1
-#             else:
-#                 print('error')
-#         elif 'push' in line:
-#             if len(line.replace('push', '').strip().split(
-#                     ' ')) == 1 and ss != 0:  # line.replace('push ', '')[:-1] != 1 and ss != 0:
-#                 print(NewStack.push(line[5:].rstrip()), end='')
-#             else:
-#                 print('error')
-#         elif 'pop' in line:
-#             if line.replace("pop", '') != '\n' or ss == 0:
-#                 print('error')
-#             else:
-#                 print(NewStack.pop())
-#         elif 'print' in line:
-#             if line.replace("print", '') != '\n' or ss == 0:
-#                 print('error')
-#             else:
-#                 print(NewStack.print(), end='')
-#         elif line == '\n':
-#             continue
-#         else:
-#             print('error')
+def get_command():
+    ss = 0
+    for line in sys.stdin:
+        if 'set' in line:
+            if len(line.replace('set', '').strip().split(
+                    ' ')) == 2 and ss == 0:  # line.replace('push ', '')[:-1] != 1 and ss != 0:
+                bf = BloomFilter(int(line.split()[1]), float(line.split()[2]))
+                ss = 1
+            else:
+                print('error')
+        elif 'add' in line:
+            if len(line.replace('add', '').strip().split(
+                    ' ')) == 1 and ss != 0:  # line.replace('push ', '')[:-1] != 1 and ss != 0:
+                bf.add(int(line.split()[1]))
+                print('',end = '')
+            else:
+                print('error')
+        elif 'search' in line:
+            if len(line.replace('search', '').strip().split(
+                    ' ')) == 1 and ss != 0:  # line.replace('push ', '')[:-1] != 1 and ss != 0:
+                print(bf.search(int(line.split()[1])), end='')
+            else:
+                print('error')
+        elif 'print' in line:
+            if line.replace("print", '') != '\n' or ss == 0:
+                print('error')
+            else:
+                print(bf.print(), end='')
+        elif line == '\n':
+            continue
+        else:
+            print('error')
 
 
 def bit_sieve(n):
@@ -82,24 +84,15 @@ class BloomFilter:
     def search(self, key):
         for i in self.hashes(key):
             if (self.bits & 2 ** i) == 0:
-                return '0'
-        return '1'
+                return '0\n'
+        return '1\n'
 
     def print(self):
+        s = ''
         for i in range(self.m - len(bin(self.bits)[2:])):
-            print('0', end='')
-        print(bin(self.bits)[:1:-1])
+            s += ('0')
+        s += (bin(self.bits)[:1:-1]) + '\n'
+        return s
 
 
-a = BloomFilter(2, 0.250)
-
-a.add(7)
-a.add(5)
-a.add(14)
-a.print()
-print(a.search(7))
-print(a.search(10))
-print(a.search(15))
-print(a.search(14))
-print(a.search(5))
-print(a.search(13))
+get_command()
